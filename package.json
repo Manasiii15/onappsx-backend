@@ -4,7 +4,7 @@
   "description": "this is authontication app for node js",
   "main": "index.js",
   "engines": {
-    "node": "14.x"
+    "node": "20.x"
   },
   "type": "module",
   "scripts": {
