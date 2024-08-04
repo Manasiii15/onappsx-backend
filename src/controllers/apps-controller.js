@@ -21,7 +21,7 @@ async function createApps(req, res) {
 
             const appname = await Apps.findOne({ name: data.bodydata.name })
             if (appname) {
-                return res.status(400).json({ message: "app allredy created!" })
+                return res.status(400).json({ message: "❌ app allredy created!" })
             }
 
             const appdata = {
@@ -35,10 +35,10 @@ async function createApps(req, res) {
             }
 
             await Apps.create(appdata)
-            return res.status(200).json({ message: "app create Sucessfully" })
+            return res.status(200).json({ message: "✅ app create Sucessfully" })
         }
 
-        return res.status(400).json({ message: "app not create" })
+        return res.status(400).json({ message: "❎app not create" })
 
     } catch (error) {
         console.log(error)
@@ -75,23 +75,6 @@ async function searchapp(req, res) {
         return res.status(400).json({ message: "search problem" })
     }
 }
-
-// async function userApps(req,res){
-//         try {
-//            const data = req.body;
-//            const userData = await User.findOne({email:data.email})
-//            if (userData) {
-
-
-//                 const userApps = await Apps.find({createdBy:userData._id})
-//                 return res.status(200).json({apps:userApps})
-//            }
-//            return res.status(400).json({message:"user not found"})
-
-//         } catch (error) {
-//             return res.status(400).json({message:"user apps error",error:error})
-//         }
-// }
 
 async function userApps(req, res) {
     try {
