@@ -12,6 +12,7 @@ router.get("/profile",verifyuser,userController.userProfile)
 router.post("/createapp",verifyuser,appscontroller.createApps)
 router.get("/userapp",verifyuser,appscontroller.userApps)
 router.delete("/userapp",verifyuser,appscontroller.appDelete)
+router.patch("/userapp",verifyuser,appscontroller.appUpdate)
 router.get("/",userController.homePage)
 
 export default router

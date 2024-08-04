@@ -1,3 +1,4 @@
+import { query } from "express";
 import tokenVerify from "../utils/token-generater.js";
 
 
@@ -12,7 +13,8 @@ async function userverify(req,res,next){
             req.body = {
                 email: userdetails.email,
                 id: userdetails.id,
-                bodydata : data
+                bodydata : data,
+                param: req.query
             }
             next()
          }

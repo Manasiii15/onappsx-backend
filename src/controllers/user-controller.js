@@ -88,7 +88,10 @@ async function userProfile(req, res) {
 
          const userData = await User.findOne({ email: userDetails.email });
 
-         res.status(200).json({ message: userData })
+        
+            res.status(200).json({ message: userData })
+        
+         
       }
 
    } catch (error) {

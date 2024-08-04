@@ -76,22 +76,49 @@ async function searchapp(req, res) {
     }
 }
 
-async function userApps(req,res){
-        try {
-           const data = req.body;
-           const userData = await User.findOne({email:data.email})
-           if (userData) {
+// async function userApps(req,res){
+//         try {
+//            const data = req.body;
+//            const userData = await User.findOne({email:data.email})
+//            if (userData) {
 
-                const userApps = await Apps.find({createdBy:userData._id})
+
+//                 const userApps = await Apps.find({createdBy:userData._id})
+//                 return res.status(200).json({apps:userApps})
+//            }
+//            return res.status(400).json({message:"user not found"})
+
+//         } catch (error) {
+//             return res.status(400).json({message:"user apps error",error:error})
+//         }
+// }
+
+async function userApps(req, res) {
+    try {
+        const data = req.body;
+        const userData = await User.findOne({ email: data.email });
+        
+        if (userData) {
+            if (data.param.appId) {
+                const app = await Apps.findOne({ _id: data.param.appId, createdBy: userData._id });
                 
-                return res.status(200).json({apps:userApps})
-           }
-           return res.status(400).json({message:"user not found"})
-
-        } catch (error) {
-            return res.status(400).json({message:"user apps error",error:error})
+                if (app) {
+                    return res.status(200).json({ app });
+                } else {
+                    return res.status(404).json({ message: "App not found" });
+                }
+            } else {
+                const userApps = await Apps.find({ createdBy: userData._id });
+                return res.status(200).json({ apps: userApps });
+            }
         }
+        
+        return res.status(400).json({ message: "User not found" });
+    } catch (error) {
+        return res.status(400).json({ message: "User apps error", error: error });
+    }
 }
+
 
 async function appDelete(req,res){
     try {
@@ -114,11 +141,36 @@ async function appDelete(req,res){
     }
 }
 
+async function appUpdate(req,res) {
+    try {
+        const userData = req.body;
+            console.log(userData);
+            const uid = userData.id
+            const updateApp = await Apps.findOne({_id:userData.bodydata._id})
+
+             if (updateApp.createdBy == uid) {
+                            const appUpdated = await updateApp.updateOne({ 
+                                name: userData.bodydata.name,
+                                title: userData.bodydata.title,
+                                link: userData.bodydata.link,
+                                discription: userData.bodydata.discription
+                            })
+               res.status(200).json({ message: "App Updated Sucessfully", appUpdated });
+            }else{
+                res.status(400).json({ message: 'user App not found' })
+            }
+
+
+    } catch (error) {
+        res.status(200).json({ message: 'App Name allredy Register',error: `${error}` })
+    }
+}
 
 export default {
     createApps,
     appApps,
     searchapp,
     userApps,
-    appDelete
+    appDelete,
+    appUpdate
 }
