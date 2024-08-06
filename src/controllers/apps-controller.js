@@ -54,6 +54,15 @@ async function appApps(req, res) {
         return res.status(400).json({ message: "error from all apps" })
     }
 }
+async function appAppsId(req, res) {
+    try {
+        const appid = req.params.id
+        const apps = await Apps.find({_id:appid})
+        return res.status(200).json({apps})
+    } catch (error) {
+        return res.status(400).json({ message: "error from all apps" })
+    }
+}
 
 async function searchapp(req, res) {
 
@@ -155,5 +164,6 @@ export default {
     searchapp,
     userApps,
     appDelete,
-    appUpdate
+    appUpdate,
+    appAppsId
 }
