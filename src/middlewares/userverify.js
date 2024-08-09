@@ -7,6 +7,7 @@ async function userverify(req,res,next){
     try {
         const token = req.query.token;
         const data = req.body
+        console.log("data",data,req.params);
         if(token){
             const userdetails = await tokenVerify.tokenVerify(token);
             
@@ -17,6 +18,8 @@ async function userverify(req,res,next){
                 param: req.query
             }
             next()
+         }else{
+            res.status(401).json({message:"token not Provide"})
          }
         
     } catch (error) {
