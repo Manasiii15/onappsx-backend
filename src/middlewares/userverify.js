@@ -7,7 +7,6 @@ async function userverify(req,res,next){
     try {
         const token = req.query.token;
         const data = req.body
-        console.log("data",data,req.params);
         if(token){
             const userdetails = await tokenVerify.tokenVerify(token);
             
