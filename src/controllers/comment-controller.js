@@ -1,4 +1,5 @@
-import Apps from '../models/apps.js';  
+import Apps from '../models/apps.js'; 
+import User from '../models/user.js'; 
 
 // Create a new comment for an app
 export const addComment = async (req, res) => {
@@ -16,9 +17,12 @@ export const addComment = async (req, res) => {
             return res.status(404).json({ message: 'App not found' });
         }
 
+        const username = await User.findById(userId).select('name');
+        const name = username.name
         const newComment = {
             userId,
-            comment
+            comment,
+            name
         };
 
         app.comments.push(newComment);

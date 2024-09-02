@@ -20,6 +20,9 @@ const commentSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    name: {  
+        type: String
+    },
     comment: {
         type: String,
         required: true
@@ -29,6 +32,8 @@ const commentSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
+
 
 // Main schema for apps
 const appsSchema = new mongoose.Schema({
