@@ -7,9 +7,6 @@ export const addComment = async (req, res) => {
         const appId = req.params.id;
         const userId = req.body.id;
         const { comment } = req.body.bodydata;
-        
-        console.log(req.body);
-        console.log(req.body.bodydata);
 
         const app = await Apps.findById(appId);
 
@@ -28,7 +25,7 @@ export const addComment = async (req, res) => {
         app.comments.push(newComment);
         await app.save();
 
-        res.status(201).json(app);
+        res.status(201).json({message:'✅ Comment Post Successfully !!'});
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error });
     }
@@ -75,8 +72,8 @@ export const updateComment = async (req, res) => {
         commentToUpdate.comment = comment;
         await app.save();
 
-        res.status(200).json(commentToUpdate);
-
+        
+        res.status(200).json({ message: 'Comment Update successfully !!' ,data:commentToUpdate});
     } catch (error) {
         res.status(500).json({ message: 'Server Error', error });
     }
