@@ -14,14 +14,17 @@ export const addComment = async (req, res) => {
             return res.status(404).json({ message: 'App not found' });
         }
 
-        const username = await User.findById(userId).select('name');
+        const username = await User.findById(userId);
         const name = username.name
+        const profilePicture = username.profilePicture
+        console.log(username);
         const newComment = {
             userId,
             comment,
-            name
+            name,
+            profilePicture,
         };
-
+console.log(newComment);
         app.comments.push(newComment);
         await app.save();
 

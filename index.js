@@ -1,8 +1,6 @@
 import "dotenv/config";
 import express from "express";
 import connectDB from "./src/utils/db.js";
-
-
 import userRoute from "./src/routes/user-routes.js"
 import appsRoute from "./src/routes/apps-routes.js"
 
@@ -11,7 +9,7 @@ const port = process.env.PORT;
 app.use(express.json());
 
 
-
+app.use(express.static('uploads'));
 
 app.use("/user",userRoute)
 app.use("/apps",appsRoute)

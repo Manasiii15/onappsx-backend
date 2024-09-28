@@ -27,6 +27,9 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    profilePicture:{
+        type: String
+    },
     timestamp: {
         type: Date,
         default: Date.now

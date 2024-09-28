@@ -2,6 +2,9 @@ import User from "../models/user.js"
 import bcrypt from "bcryptjs"
 import jwtToken from "../utils/token-generater.js";
 
+import fs from 'fs';
+import path from 'path';
+
 
 async function homePage(req, res) {
    return res.status(200).json({ message: "user route home page" })
@@ -86,7 +89,7 @@ async function userProfile(req, res) {
    
       if (userDetails) {
 
-         const userData = await User.findOne({ email: userDetails.email });
+        const userData = await User.findOne({ email: userDetails.email });
 
         
             res.status(200).json({ message: userData })
@@ -101,10 +104,94 @@ async function userProfile(req, res) {
 
 }
 
+async function userProfilePic(req, res) {
+   try {
+      const data = req.body
+      const userDetails = data
+   
+      if (userDetails) {
+
+        const userData = await User.findById(userDetails.id);
+
+        if (!userData) {
+         return res.status(404).json({ message: "User not found" });
+      }
+
+      // Create a response object with only the profileImage field
+      const userpic = {
+         profileImage: userData.profilePicture
+      };
+
+            res.status(200).json({ userpic })
+        
+         
+      }
+      
+   } catch (error) {
+
+      res.status(401).json({ message: "null value" })
+   }
+
+}
+
+async function handleProfilePictureUpload(req, res) {
+   try {
+       const userId = req.body.id;
+
+       // Ensure the file was uploaded
+       if (!req.file) {
+           return res.status(400).json({ message: 'No file uploaded' });
+       }
+
+       const profilePicturePath = req.file.filename; // New profile picture path
+
+       // Fetch the user to get the current profile picture path
+       const user = await User.findById(userId);
+       if (!user) {
+           return res.status(404).json({ message: 'User not found' });
+       }
+
+       // Check if the user has an existing profile picture
+       const oldProfilePicture = user.profilePicture;
+       const defaultProfilePicture = 'avatar.webp';
+
+       if (oldProfilePicture && oldProfilePicture !== defaultProfilePicture) {
+           // Construct the full path to the old profile picture
+           const oldProfilePicturePath = path.join('uploads', oldProfilePicture);
+
+           // Check if the old profile picture exists on the file system
+           if (fs.existsSync(oldProfilePicturePath)) {
+               // If the file exists, delete it
+               fs.unlink(oldProfilePicturePath, (err) => {
+                   if (err) {
+                       console.error('Error deleting old profile picture:', err);
+                   } else {
+                       console.log('Old profile picture deleted:', oldProfilePicturePath);
+                   }
+               });
+           } else {
+               console.log('Old profile picture not found, skipping deletion:', oldProfilePicturePath);
+           }
+       }
+
+       // Update the user's profile picture in the database
+       user.profilePicture = profilePicturePath;
+       await user.save();
+
+       // Respond with success message
+       return res.status(200).json({ message: 'Profile picture uploaded successfully', file: req.file });
+
+   } catch (error) {
+       console.error(error);
+       return res.status(500).json({ message: 'Server error while uploading profile picture' });
+   }
+}
 
 export default {
    handleUserSignUp,
    homePage,
    handleUserlogin,
-   userProfile
+   userProfile,
+   handleProfilePictureUpload,
+   userProfilePic
 }

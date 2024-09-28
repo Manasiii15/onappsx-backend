@@ -23,6 +23,7 @@ async function userverify(req,res,next){
         
     } catch (error) {
       console.log(error);
+      console.log("this codep");
       res.status(401).json({message:"user not verify"})  
     }
 }
