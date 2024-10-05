@@ -4,6 +4,11 @@ import hashPassword from "../middlewares/bcriptjs-hashpasword.js";
 import verifyuser from '../middlewares/userverify.js'
 import appscontroller from '../controllers/apps-controller.js'
 import upload from '../middlewares/multer.js'
+
+// test
+import uploades from "../controllers/uploadtest.js";
+
+// 
 const router = express.Router()
 
 router.post("/signup",hashPassword,userController.handleUserSignUp)
@@ -18,7 +23,7 @@ router.get("/userapp",verifyuser,appscontroller.userApps)
 router.delete("/userapp",verifyuser,appscontroller.appDelete)
 router.patch("/userapp",verifyuser,appscontroller.appUpdate)
 
-
+router.post('/uploadcloud',upload.single('file'),uploades)
 
 
 // router.post("/upload",upload.single('avatar'),function (req, res) {

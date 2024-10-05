@@ -15,14 +15,14 @@ export const addComment = async (req, res) => {
         }
 
         const username = await User.findById(userId);
-        const name = username.name
-        const profilePicture = username.profilePicture
+        // const name = username.name
+        // const profilePicture = username.profilePicture
         console.log(username);
         const newComment = {
             userId,
             comment,
-            name,
-            profilePicture,
+            // name,
+            // profilePicture,
         };
 console.log(newComment);
         app.comments.push(newComment);
@@ -35,16 +35,50 @@ console.log(newComment);
 };
 
 // Get all comments for an app
+// export const getComments = async (req, res) => {
+//     try {
+//         const appId = req.params.id;
+//         const app = await Apps.findById(appId)
+//         if (!app) {
+//             return res.status(404).json({ message: 'App not found' });
+//         }
+
+//         res.status(200).json(app.comments);
+//     } catch (error) {
+//         res.status(500).json({ message: 'Server Error', error });
+//     }
+// };
+
+// Get all comments for an app
 export const getComments = async (req, res) => {
     try {
         const appId = req.params.id;
-        const app = await Apps.findById(appId)
+        console.log(appId);
+        // console.log(Apps.findById(appId));
+        const app = await Apps.findById(appId).populate({
+            path: 'comments.userId',  // Populate the userId inside the comments array
+            select: 'name profilePicture'  // Fetch only the name and profile picture fields
+        });
+        console.log("comments okkk",app.comments);
+        console.log("---------------------------");
+        console.log("okkkk",app);
+
         if (!app) {
             return res.status(404).json({ message: 'App not found' });
         }
 
-        res.status(200).json(app.comments);
+        // Iterate through comments and dynamically access profile picture
+        const commentsWithProfile = app.comments.map(comment => ({
+            comment: comment.comment,
+            userName: comment.userId?.name,
+            profilePicture: comment.userId?.profilePicture,  // Dynamically access profile picture
+            timestamp: comment.timestamp
+        }));
+        console.log("comments",commentsWithProfile);
+
+        res.status(200).json(commentsWithProfile);
     } catch (error) {
+        console.error('Error fetching comments:', error);
         res.status(500).json({ message: 'Server Error', error });
     }
 };

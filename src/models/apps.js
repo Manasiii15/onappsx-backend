@@ -20,16 +20,16 @@ const commentSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    name: {  
-        type: String
-    },
+    // name: {  
+    //     type: String
+    // },
     comment: {
         type: String,
         required: true
     },
-    profilePicture:{
-        type: String
-    },
+    // profilePicture:{
+    //     type: String
+    // },
     timestamp: {
         type: Date,
         default: Date.now
@@ -70,6 +70,6 @@ const appsSchema = new mongoose.Schema({
 
 
 // Creating the model
-const Apps = mongoose.model('apps', appsSchema);
+const Apps = mongoose.model('Apps', appsSchema);
 
 export default Apps;

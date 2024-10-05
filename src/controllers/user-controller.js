@@ -1,9 +1,10 @@
 import User from "../models/user.js"
 import bcrypt from "bcryptjs"
 import jwtToken from "../utils/token-generater.js";
+import cloudupload from "../utils/cloudupload.js";
 
-import fs from 'fs';
-import path from 'path';
+// import fs from 'fs';
+// import path from 'path';
 
 
 async function homePage(req, res) {
@@ -137,13 +138,16 @@ async function userProfilePic(req, res) {
 async function handleProfilePictureUpload(req, res) {
    try {
        const userId = req.body.id;
-
+console.log(req.body.id);
        // Ensure the file was uploaded
        if (!req.file) {
            return res.status(400).json({ message: 'No file uploaded' });
        }
 
-       const profilePicturePath = req.file.filename; // New profile picture path
+       const profilePicturePath = req.file.path; // New profile picture Cloudinary URL
+       const profilePicturePublicId = req.file.filename; // New profile picture Cloudinary public ID
+       console.log(req.file.path);
+
 
        // Fetch the user to get the current profile picture path
        const user = await User.findById(userId);
@@ -151,34 +155,35 @@ async function handleProfilePictureUpload(req, res) {
            return res.status(404).json({ message: 'User not found' });
        }
 
+      
        // Check if the user has an existing profile picture
        const oldProfilePicture = user.profilePicture;
+       const oldProfilePicturePublicId = user.profilePicturePublicId;
        const defaultProfilePicture = 'avatar.webp';
 
        if (oldProfilePicture && oldProfilePicture !== defaultProfilePicture) {
-           // Construct the full path to the old profile picture
-           const oldProfilePicturePath = path.join('uploads', oldProfilePicture);
+         // Delete the old profile picture from Cloudinary
+         if (oldProfilePicturePublicId) {
+            const meaas = await cloudupload.removeimagecloud(oldProfilePicturePublicId)
+             console.log("deleating",meaas);
+         }
+     }
 
-           // Check if the old profile picture exists on the file system
-           if (fs.existsSync(oldProfilePicturePath)) {
-               // If the file exists, delete it
-               fs.unlink(oldProfilePicturePath, (err) => {
-                   if (err) {
-                       console.error('Error deleting old profile picture:', err);
-                   } else {
-                       console.log('Old profile picture deleted:', oldProfilePicturePath);
-                   }
-               });
-           } else {
-               console.log('Old profile picture not found, skipping deletion:', oldProfilePicturePath);
-           }
-       }
 
-       // Update the user's profile picture in the database
-       user.profilePicture = profilePicturePath;
-       await user.save();
+     const result = await cloudupload.uploadimagefuncton(profilePicturePath,profilePicturePublicId)
+       
+     console.log(result.url);
+
+      //  Update the user's profile picture in the database
+       user.profilePicture = result.secure_url; // Store the Cloudinary URL
+       user.profilePicturePublicId = result.public_id; 
+      // Store the public ID for deletion later
+
+      await user.save();
 
        // Respond with success message
+       console.log("okkkkkk");
+
        return res.status(200).json({ message: 'Profile picture uploaded successfully', file: req.file });
 
    } catch (error) {
