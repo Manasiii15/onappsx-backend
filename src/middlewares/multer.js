@@ -1,16 +1,7 @@
 import multer from "multer"
 
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//       cb(null, 'uploads')
-//     },
-//     filename: function (req, file, cb) {
-//         const sanitizedFileName = file.originalname.replace(/\s+/g, '-');
-//       const uniqueSuffix = Date.now() + sanitizedFileName
-//       cb(null, file.fieldname + '-' + uniqueSuffix)
-//     }
-//   })
-  
+// Set up multer storage for Cloudinary
+
   const storage = multer.diskStorage({})
   const upload = multer({ storage: storage })
 

@@ -23,8 +23,9 @@ router.get("/userapp",verifyuser,appscontroller.userApps)
 router.delete("/userapp",verifyuser,appscontroller.appDelete)
 router.patch("/userapp",verifyuser,appscontroller.appUpdate)
 
-router.post('/uploadcloud',upload.single('file'),uploades)
+router.post('/uploadcloud',uploades)
 
+// router.post('/uploadcloud',upload.single('file'),uploades)
 
 // router.post("/upload",upload.single('avatar'),function (req, res) {
 //     if (!req.file) {
