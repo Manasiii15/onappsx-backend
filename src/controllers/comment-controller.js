@@ -57,7 +57,7 @@ export const getComments = async (req, res) => {
         // console.log(Apps.findById(appId));
         const app = await Apps.findById(appId).populate({
             path: 'comments.userId',  // Populate the userId inside the comments array
-            select: 'name profilePicture _id'  // Fetch only the name and profile picture fields
+            select: 'name profilePicture'  // Fetch only the name and profile picture fields
         });
         console.log("comments okkk",app.comments);
         console.log("---------------------------");
@@ -69,10 +69,8 @@ export const getComments = async (req, res) => {
 
         // Iterate through comments and dynamically access profile picture
         const commentsWithProfile = app.comments.map(comment => ({
-            _id: comment._id,
             comment: comment.comment,
             userName: comment.userId?.name,
-            userId: comment.userId?._id,
             profilePicture: comment.userId?.profilePicture,  // Dynamically access profile picture
             timestamp: comment.timestamp
         }));
