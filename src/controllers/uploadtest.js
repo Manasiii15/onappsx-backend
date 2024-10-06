@@ -1,24 +1,25 @@
+import { put } from "@vercel/blob";
 
-import cloudupload from "../utils/cloudupload.js";
+// import cloudupload from "../utils/cloudupload.js";
 
 async function uploades(req,res){
     try {
-        if (req.file) {
-            console.log(req.file);
-
-            console.log(req.file.path);
-            const data = await cloudupload.uploadimagefuncton(req.file.path)
-            // console.log("this is data",data);
-            res.json({message:"image upload successfully"},data)
-            
-        }else{
-            res.json({message:"error"})
+        if (!req.file) {
+          return res.status(400).json({ message: 'No file uploaded' });
         }
-        
-    } catch (error) {
-        console.error(error);
-       return res.status(500).json({ message: 'Server error while uploading profile picture' });
-    }
+    
+        // Upload the file to Vercel Blob
+        const blob = await put(req.file.originalname, req.file.buffer, {
+          access: 'public', // File will be publicly accessible
+          contentType: req.file.mimetype // MIME type of the file
+        });
+    
+        // Send back the Blob URL
+        res.status(200).json({ message: 'File uploaded successfully', url: blob.url });
+      } catch (error) {
+        console.error('Error uploading file to Vercel Blob:', error);
+        res.status(500).json({ message: 'File upload failed' });
+      }
 }
 
 export default uploades

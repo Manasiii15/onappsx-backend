@@ -1,10 +1,10 @@
 import User from "../models/user.js"
 import bcrypt from "bcryptjs"
 import jwtToken from "../utils/token-generater.js";
-import cloudupload from "../utils/cloudupload.js";
+import { del, put } from "@vercel/blob";
 
-// import fs from 'fs';
-// import path from 'path';
+
+
 
 
 async function homePage(req, res) {
@@ -135,6 +135,55 @@ async function userProfilePic(req, res) {
 
 }
 
+// async function handleProfilePictureUpload(req, res) {
+//    try {
+//       const userId = req.body.id;
+
+//       // Ensure the file was uploaded
+//       if (!req.file) {
+//           return res.status(400).json({ message: 'No file uploaded' });
+//       }
+
+//       // File buffer is available in req.file.buffer
+//       const fileBuffer = req.file.buffer;
+//       const profilePicturePublicId = req.file.originalname;
+
+//       // Fetch the user to get the current profile picture path
+//       const user = await User.findById(userId);
+//       if (!user) {
+//           return res.status(404).json({ message: 'User not found' });
+//       }
+
+//       // Delete the old profile picture from Cloudinary if exists
+//       const oldProfilePicturePublicId = user.profilePicturePublicId;
+//       if (oldProfilePicturePublicId) {
+//           await cloudupload.removeimagecloud(oldProfilePicturePublicId);
+//       }
+
+//       // Upload the new profile picture to Cloudinary
+//       const result = await cloudupload.uploadimagefuncton(fileBuffer, profilePicturePublicId);
+
+//       // Update the user's profile picture in the database
+//       user.profilePicture = result.secure_url; // Cloudinary URL
+//       user.profilePicturePublicId = result.public_id; // Public ID for later deletion
+
+//       await user.save();
+
+//        // Respond with success message
+//        console.log("okkkkkk");
+
+//        return res.status(200).json({ message: 'Profile picture uploaded successfully', file: req.file });
+
+//    } catch (error) {
+//        console.error(error);
+//        return res.status(500).json({ message: 'Server error while uploading profile picture' });
+//    }
+// }
+
+
+
+
+
 async function handleProfilePictureUpload(req, res) {
    try {
       const userId = req.body.id;
@@ -146,7 +195,10 @@ async function handleProfilePictureUpload(req, res) {
 
       // File buffer is available in req.file.buffer
       const fileBuffer = req.file.buffer;
+      console.log(fileBuffer);
       const profilePicturePublicId = req.file.originalname;
+console.log(profilePicturePublicId);
+
 
       // Fetch the user to get the current profile picture path
       const user = await User.findById(userId);
@@ -155,22 +207,27 @@ async function handleProfilePictureUpload(req, res) {
       }
 
       // Delete the old profile picture from Cloudinary if exists
-      const oldProfilePicturePublicId = user.profilePicturePublicId;
-      if (oldProfilePicturePublicId) {
-          await cloudupload.removeimagecloud(oldProfilePicturePublicId);
+      const oldProfilePicture = user.profilePicture;
+      console.log("oldProfilePicture",oldProfilePicture)
+
+      if (oldProfilePicture) {
+          const result = await del(oldProfilePicture)
+          console.log(result);
       }
 
       // Upload the new profile picture to Cloudinary
-      const result = await cloudupload.uploadimagefuncton(fileBuffer, profilePicturePublicId);
+      const result = await put(req.file.originalname, req.file.buffer, {
+         access: 'public', // File will be publicly accessible
+         contentType: req.file.mimetype // MIME type of the file
+       });
 
       // Update the user's profile picture in the database
-      user.profilePicture = result.secure_url; // Cloudinary URL
-      user.profilePicturePublicId = result.public_id; // Public ID for later deletion
+      user.profilePicture = result.url;
 
-      await user.save();
+       const okk= await user.save();
 
        // Respond with success message
-       console.log("okkkkkk");
+       console.log("okkkkkk",okk);
 
        return res.status(200).json({ message: 'Profile picture uploaded successfully', file: req.file });
 
@@ -179,6 +236,7 @@ async function handleProfilePictureUpload(req, res) {
        return res.status(500).json({ message: 'Server error while uploading profile picture' });
    }
 }
+
 
 export default {
    handleUserSignUp,
