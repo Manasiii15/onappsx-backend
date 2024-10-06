@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     profilePicture:{
         type: String,
-        default: "https://x2lcrkk2g3m81lpd.public.blob.vercel-storage.com/avatar-8hMgA3YyTyBM47XB0iiuLGwMufzlCY.webp",
+        default: "https://x2lcrkk2g3m81lpd.public.blob.vercel-storage.com/avatar-shJZRrtkhhAylUvqNVk01UJ1qinZFZ.webp",
     },
     profilePicturePublicId:{
         type:String

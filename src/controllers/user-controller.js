@@ -210,7 +210,7 @@ console.log(profilePicturePublicId);
       const oldProfilePicture = user.profilePicture;
       console.log("oldProfilePicture",oldProfilePicture)
 
-      if (oldProfilePicture) {
+      if (oldProfilePicture !== "https://x2lcrkk2g3m81lpd.public.blob.vercel-storage.com/avatar-shJZRrtkhhAylUvqNVk01UJ1qinZFZ.webp") {
           const result = await del(oldProfilePicture)
           console.log(result);
       }
