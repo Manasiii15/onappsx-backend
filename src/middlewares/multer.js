@@ -1,10 +1,7 @@
-import multer from "multer"
+import multer from "multer";
 
-// Set up multer storage for Cloudinary
+const storage = multer.memoryStorage();
 
-  const storage = multer.diskStorage({})
-  const upload = multer({ storage: storage })
+const upload = multer({ storage: storage });
 
-
-  
-  export default upload
+export default upload

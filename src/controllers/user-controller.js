@@ -137,47 +137,35 @@ async function userProfilePic(req, res) {
 
 async function handleProfilePictureUpload(req, res) {
    try {
-       const userId = req.body.id;
-console.log(req.body.id);
-       // Ensure the file was uploaded
-       if (!req.file) {
-           return res.status(400).json({ message: 'No file uploaded' });
-       }
+      const userId = req.body.id;
 
-       const profilePicturePath = req.file.path; // New profile picture Cloudinary URL
-       const profilePicturePublicId = req.file.filename; // New profile picture Cloudinary public ID
-       console.log(req.file.path);
+      // Ensure the file was uploaded
+      if (!req.file) {
+          return res.status(400).json({ message: 'No file uploaded' });
+      }
 
+      // File buffer is available in req.file.buffer
+      const fileBuffer = req.file.buffer;
+      const profilePicturePublicId = req.file.originalname;
 
-       // Fetch the user to get the current profile picture path
-       const user = await User.findById(userId);
-       if (!user) {
-           return res.status(404).json({ message: 'User not found' });
-       }
+      // Fetch the user to get the current profile picture path
+      const user = await User.findById(userId);
+      if (!user) {
+          return res.status(404).json({ message: 'User not found' });
+      }
 
-      
-       // Check if the user has an existing profile picture
-       const oldProfilePicture = user.profilePicture;
-       const oldProfilePicturePublicId = user.profilePicturePublicId;
-       const defaultProfilePicture = 'avatar.webp';
+      // Delete the old profile picture from Cloudinary if exists
+      const oldProfilePicturePublicId = user.profilePicturePublicId;
+      if (oldProfilePicturePublicId) {
+          await cloudupload.removeimagecloud(oldProfilePicturePublicId);
+      }
 
-       if (oldProfilePicture && oldProfilePicture !== defaultProfilePicture) {
-         // Delete the old profile picture from Cloudinary
-         if (oldProfilePicturePublicId) {
-            const meaas = await cloudupload.removeimagecloud(oldProfilePicturePublicId)
-             console.log("deleating",meaas);
-         }
-     }
+      // Upload the new profile picture to Cloudinary
+      const result = await cloudupload.uploadimagefuncton(fileBuffer, profilePicturePublicId);
 
-
-     const result = await cloudupload.uploadimagefuncton(profilePicturePath,profilePicturePublicId)
-       
-     console.log(result.url);
-
-      //  Update the user's profile picture in the database
-       user.profilePicture = result.secure_url; // Store the Cloudinary URL
-       user.profilePicturePublicId = result.public_id; 
-      // Store the public ID for deletion later
+      // Update the user's profile picture in the database
+      user.profilePicture = result.secure_url; // Cloudinary URL
+      user.profilePicturePublicId = result.public_id; // Public ID for later deletion
 
       await user.save();
 

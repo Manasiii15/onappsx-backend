@@ -2,7 +2,31 @@ import { v2 as cloudinary } from 'cloudinary';
 
 
 
-const uploadimagefuncton = async(file,id)=>{
+// const uploadimagefuncton = async(file,id)=>{
+
+//     cloudinary.config({ 
+//         cloud_name: process.env.CLOUD_NAME, 
+//         api_key: process.env.API_KEY, 
+//         api_secret: process.env.API_SECRET
+//     });
+
+
+//     const uploadResult = await cloudinary.uploader
+//     .upload(
+//         file, {
+//             public_id: id,
+//             folder: 'onappx'
+//         }
+//     )
+//     .catch((error) => {
+//         console.log(error);
+//     });
+ 
+//  console.log(uploadResult);
+
+// return uploadResult
+// }
+const uploadimagefuncton = async (buffer, id) => {
 
     cloudinary.config({ 
         cloud_name: process.env.CLOUD_NAME, 
@@ -10,39 +34,15 @@ const uploadimagefuncton = async(file,id)=>{
         api_secret: process.env.API_SECRET
     });
 
-
-    const uploadResult = await cloudinary.uploader
-    .upload(
-        file, {
-            public_id: id,
-            folder: 'onappx'
-        }
-    )
-    .catch((error) => {
-        console.log(error);
+    return new Promise((resolve, reject) => {
+        cloudinary.uploader
+            .upload_stream({ public_id: id, folder: 'onappx' }, (error, result) => {
+                if (error) return reject(error);
+                resolve(result);
+            })
+            .end(buffer);  // Here we pass the file buffer
     });
- 
- console.log(uploadResult);
-
-return uploadResult
-//  const url = cloudinary.url(uploadResult.public_id,{
-//     transformation:[{
-//         quality:'auto'
-//     },
-// {
-//     fetch_format:'auto'
-// }]
-//  })
-// console.log(url);
-
-
-// deleate
-
-// const imagedelete = await cloudinary.uploader.destroy('car1')
-
-// console.log(imagedelete);
-
-}
+};
 
 const removeimagecloud = async(public_id)=>{
     cloudinary.config({ 

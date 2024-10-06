@@ -3,12 +3,10 @@ import express from "express";
 import connectDB from "./src/utils/db.js";
 import userRoute from "./src/routes/user-routes.js"
 import appsRoute from "./src/routes/apps-routes.js"
-// import cloudinary from "./src/utils/cloudupload.js";
 
 const app = express();
 const port = process.env.PORT;
 app.use(express.json());
-
 
 app.use(express.static('uploads'));
 
