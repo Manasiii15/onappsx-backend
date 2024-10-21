@@ -10,7 +10,6 @@ async function userverify(req,res,next){
        
         if(token){
             const userdetails = await tokenVerify.tokenVerify(token);
-            console.log(userdetails);
             req.body = {
                 email: userdetails.email,
                 id: userdetails.id,
