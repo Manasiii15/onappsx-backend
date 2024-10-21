@@ -6,7 +6,6 @@ import User from "../models/user.js";
 async function createApps(req, res) {
     try {
         const data = req.body;
-        console.log(data, "data from client");
         
 
         if (data) {
@@ -157,6 +156,31 @@ async function appUpdate(req,res) {
         res.status(200).json({ message: 'App Name allredy Register',error: `${error}` })
     }
 }
+// app logo update controller
+async function appLogoUpdate(req,res) {
+    
+    try {
+        const data = req.body;
+        const logo = req.file;
+
+// token
+       console.log(data.token);
+       
+// logo and appid is gating
+
+        if (logo && data.appid) {
+
+        res.status(200).json({message:logo,data:data})
+
+        }else{
+            res.status(202).json({message:"logo and data image is not upload"})
+        }
+        
+    } catch (error) {
+        res.status(200).json({ message: 'App logo Upload Problem',error: `${error}` })
+    }
+    
+}
 
 export default {
     createApps,
@@ -165,5 +189,6 @@ export default {
     userApps,
     appDelete,
     appUpdate,
-    appAppsId
+    appAppsId,
+    appLogoUpdate
 }

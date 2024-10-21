@@ -18,12 +18,14 @@ router.get("/profilepic",userController.userProfilePic)
 
 router.post("/profile/upload",upload.single('profilePicture'), verifyuser,  userController.handleProfilePictureUpload);
 
+
+// create app //
 router.post("/createapp",verifyuser,appscontroller.createApps)
 router.get("/userapp",verifyuser,appscontroller.userApps)
 router.delete("/userapp",verifyuser,appscontroller.appDelete)
 router.patch("/userapp",verifyuser,appscontroller.appUpdate)
-// 
-
+// upload app logo
+router.post("/logoupload",verifyuser,upload.single('logo'),appscontroller.appLogoUpdate)
 // test
 
 router.post("/uploadpic",upload.single('file'), uploades);

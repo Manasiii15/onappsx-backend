@@ -46,7 +46,8 @@ const appsSchema = new mongoose.Schema({
         unique: true
     },
     logo:{
-        type: String
+        type: String,
+        default: "https://x2lcrkk2g3m81lpd.public.blob.vercel-storage.com/logo-jrjiJ7vDfNJIDmyis2NTOesVOFXtGV.svg"
     },
     title: {
         type: String,
